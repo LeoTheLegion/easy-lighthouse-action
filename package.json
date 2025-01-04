@@ -5,7 +5,8 @@
   "main": "src/action.ts",
   "scripts": {
     "build": "tsc",
-    "test": "jest"
+    "test": "jest",
+    "local" : "local-action ./ src/index.ts .env"
   },
   "keywords": [
     "github",
