@@ -1,13 +1,15 @@
-name: My Custom GitHub Action
-description: A custom GitHub Action that performs specific tasks.
+name: 'Lighthouse Action'
+description: 'Run Lighthouse audit'
 inputs:
-  exampleInput:
-    description: 'An example input for the action'
+  url:
+    description: 'URL to audit'
     required: true
-    default: 'default value'
-outputs:
-  exampleOutput:
-    description: 'An example output from the action'
+  threshold:
+    description: 'Performance score threshold'
+    default: '90'
+  device:
+    description: 'Device to emulate (mobile/desktop)'
+    default: 'mobile'
 runs:
-  using: 'node12'
-  main: 'dist/action.js'
+  using: 'node16'
+  main: 'dist/index.js'

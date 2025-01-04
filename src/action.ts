@@ -1,9 +1,14 @@
 import * as core from '@actions/core';
+import { getConfig } from './config';
 
 export async function runAction(): Promise<void> {
     try {
-        // Core functionality of the GitHub Action goes here.
-        core.info('GitHub Action is running...');
+        const config = getConfig();
+        core.info(`Running Lighthouse for URL: ${config.url}`);
+        core.info(`Performance threshold: ${config.threshold}`);
+        core.info(`Device: ${config.device}`);
+        
+        // Core functionality using config values
     } catch (error) {
         if (error instanceof Error) {
             core.setFailed(error.message);

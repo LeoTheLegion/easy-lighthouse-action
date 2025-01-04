@@ -1,13 +1,10 @@
-// This file exports a configuration object for the GitHub Action.
+import * as core from '@actions/core';
+import { ActionConfig } from './types';
 
-export const config = {
-    environment: {
-        NODE_ENV: process.env.NODE_ENV || 'development',
-    },
-    inputs: {
-        exampleInput: {
-            required: true,
-            description: 'An example input for the action',
-        },
-    },
-};
+export function getConfig(): ActionConfig {
+    return {
+        url: core.getInput('url', { required: true }),
+        threshold: Number(core.getInput('threshold')) || 90,
+        device: core.getInput('device') as 'mobile' | 'desktop' || 'mobile'
+    };
+}
