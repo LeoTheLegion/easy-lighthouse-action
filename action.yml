@@ -1,0 +1,13 @@
+name: My Custom GitHub Action
+description: A custom GitHub Action that performs specific tasks.
+inputs:
+  exampleInput:
+    description: 'An example input for the action'
+    required: true
+    default: 'default value'
+outputs:
+  exampleOutput:
+    description: 'An example output from the action'
+runs:
+  using: 'node12'
+  main: 'dist/action.js'
