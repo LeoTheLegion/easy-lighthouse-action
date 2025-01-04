@@ -12,4 +12,4 @@ inputs:
     default: 'mobile'
 runs:
   using: 'node16'
-  main: 'dist/index.js'
+  main: 'dist/action.js'
