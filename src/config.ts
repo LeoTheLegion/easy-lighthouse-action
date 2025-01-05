@@ -6,6 +6,6 @@ export function getConfig(): ActionConfig {
         url: core.getInput('url', { required: true }),
         threshold: Number(core.getInput('threshold')) || 90,
         device: core.getInput('device') as 'mobile' | 'desktop' || 'mobile',
-        apiKey : core.getInput('page-insights-key', { required: true })
+        apiKey : core.getInput('page_insights_key', { required: true })
     };
 }
