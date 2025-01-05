@@ -1,8 +1,8 @@
 name: 'Lighthouse Action'
 description: 'Run Lighthouse audit'
 inputs:
-  url:
-    description: 'URL to audit'
+  urls:
+    description: 'URLs to audit'
     required: true
   threshold:
     description: 'Performance score threshold'
