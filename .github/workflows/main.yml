@@ -33,6 +33,7 @@ jobs:
           url: 'https://www.github.com'
           threshold: '90'
           device: 'mobile'
+          page_insights_key: ${{ secrets.PAGE_INSIGHTS_KEY }}
       
       # Optional: Add another test case
       - name: Run Lighthouse Action (Desktop)
@@ -41,3 +42,4 @@ jobs:
           url: 'https://www.github.com'
           threshold: '90'
           device: 'desktop'
+          page_insights_key: ${{ secrets.PAGE_INSIGHTS_KEY }}
