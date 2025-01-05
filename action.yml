@@ -10,6 +10,9 @@ inputs:
   device:
     description: 'Device to emulate (mobile/desktop)'
     default: 'mobile'
+  page_insights_key:
+    description: 'Google Page Insights API key'
+    required: true
 runs:
   using: 'node16'
   main: 'dist/index.js'

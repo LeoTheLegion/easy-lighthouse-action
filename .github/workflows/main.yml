@@ -30,7 +30,7 @@ jobs:
       - name: Run Lighthouse Action
         uses: ./
         with:
-          url: 'https://www.github.com'
+          url: 'https://leothelegion.net'
           threshold: '90'
           device: 'mobile'
           page_insights_key: ${{ secrets.PAGE_INSIGHTS_KEY }}
