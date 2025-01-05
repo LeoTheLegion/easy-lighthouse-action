@@ -1,4 +1,4 @@
-name: Lighthouse CI
+name: PageInsights CI
 
 on:
   push:
@@ -27,7 +27,7 @@ jobs:
         run: npm run build
         
       # Test the action using itself
-      - name: Run Lighthouse Action
+      - name: Run PageInsights Action
         uses: ./
         with:
           url: 'https://leothelegion.net'
@@ -36,7 +36,7 @@ jobs:
           page_insights_key: ${{ secrets.PAGE_INSIGHTS_KEY }}
       
       # Optional: Add another test case
-      - name: Run Lighthouse Action (Desktop)
+      - name: Run PageInsights Action (Desktop)
         uses: ./
         with:
           url: 'https://leothelegion.net'
