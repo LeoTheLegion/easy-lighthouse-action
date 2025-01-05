@@ -30,7 +30,7 @@ jobs:
       - name: Run PageInsights Action
         uses: ./
         with:
-          url: 'https://leothelegion.net'
+          urls: 'https://leothelegion.net https://leothelegion.net/blog' # Test multiple URLs
           threshold: '90'
           device: 'mobile'
           page_insights_key: ${{ secrets.PAGE_INSIGHTS_KEY }}
@@ -39,7 +39,7 @@ jobs:
       - name: Run PageInsights Action (Desktop)
         uses: ./
         with:
-          url: 'https://leothelegion.net'
+          urls: 'https://leothelegion.net https://leothelegion.net/blog' # Test multiple URLs
           threshold: '90'
           device: 'desktop'
           page_insights_key: ${{ secrets.PAGE_INSIGHTS_KEY }}
