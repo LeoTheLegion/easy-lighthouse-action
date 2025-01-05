@@ -1,15 +1,18 @@
 import * as core from '@actions/core';
 import { getConfig } from './config';
+import PageInsightsAnalyzer from './pageinsightsanalyzer';
 
 export async function run(): Promise<void> {
     try {
         const config = getConfig();
-        core.info(`Running Lighthouse for URL: ${config.url}`);
+        core.info(`Running PageInsights for site: ${config.url}`);
         core.info(`Performance threshold: ${config.threshold}`);
         core.info(`Device: ${config.device}`);
+        core.info(`API Key: ${config.apiKey}`);
 
         //Run Lighthouse
-        
+        const lighthouse = new PageInsightsAnalyzer();
+        await lighthouse.Run(config);
         
         // Core functionality using config values
     } catch (error) {

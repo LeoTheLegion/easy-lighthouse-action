@@ -4,4 +4,5 @@ export interface ActionConfig {
     url: string;
     threshold: number;
     device?: 'mobile' | 'desktop';
+    apiKey: string;
 }
