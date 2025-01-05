@@ -39,7 +39,7 @@ jobs:
       - name: Run Lighthouse Action (Desktop)
         uses: ./
         with:
-          url: 'https://www.github.com'
+          url: 'https://leothelegion.net'
           threshold: '90'
           device: 'desktop'
           page_insights_key: ${{ secrets.PAGE_INSIGHTS_KEY }}
