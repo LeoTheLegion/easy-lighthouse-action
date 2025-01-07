@@ -2,7 +2,10 @@
 
 export interface ActionConfig {
     urls: string;
-    threshold: number;
     device?: 'mobile' | 'desktop';
     apiKey: string;
+    performance_threshold?: number;
+    accessibility_threshold?: number;
+    best_practices_threshold?: number;
+    seo_threshold?: number;
 }

@@ -31,15 +31,21 @@ jobs:
         uses: ./
         with:
           urls: 'https://leothelegion.net https://leothelegion.net/blog' # Test multiple URLs
-          threshold: '90'
           device: 'mobile'
           page_insights_key: ${{ secrets.PAGE_INSIGHTS_KEY }}
+          performance_threshold: '90'
+          seo_threshold: '90'
+          accessibility_threshold: '90'
+          best_practices_threshold: '90'
       
       # Optional: Add another test case
       - name: Run PageInsights Action (Desktop)
         uses: ./
         with:
           urls: 'https://leothelegion.net https://leothelegion.net/blog' # Test multiple URLs
-          threshold: '90'
           device: 'desktop'
           page_insights_key: ${{ secrets.PAGE_INSIGHTS_KEY }}
+          performance_threshold: '90'
+          seo_threshold: '90'
+          accessibility_threshold: '90'
+          best_practices_threshold: '90'

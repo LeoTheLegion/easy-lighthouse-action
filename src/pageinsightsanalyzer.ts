@@ -3,9 +3,12 @@ import { ActionConfig } from './types';
 import * as core from '@actions/core';
 
 interface PGConfig {
-    threshold: number;
     device?: 'mobile' | 'desktop';
     apiKey: string;
+    performance_threshold?: number;
+    accessibility_threshold?: number;
+    best_practices_threshold?: number;
+    seo_threshold?: number;
 }
 
 interface Score{
@@ -37,9 +40,12 @@ export default class PageInsightsAnalyzer {
 
     constructor(config: ActionConfig) {
         this._pgConfig = {
-            threshold: config.threshold,
             device: config.device,
-            apiKey: config.apiKey
+            apiKey: config.apiKey,
+            performance_threshold: config.performance_threshold,
+            accessibility_threshold: config.accessibility_threshold,
+            best_practices_threshold: config.best_practices_threshold,
+            seo_threshold: config.seo_threshold
         }
 
         this.urls = config.urls.split(' ');
@@ -50,7 +56,11 @@ export default class PageInsightsAnalyzer {
     async Run() {
 
         core.info(`Running PageInsights Analyzer with the following configuration:`);
-        core.info(`Performance threshold: ${this._pgConfig.threshold}`);
+        
+        core.info(`Performance Threshold: ${this._pgConfig.performance_threshold || "N/A"}`);
+        core.info(`Accessibility Threshold: ${this._pgConfig.accessibility_threshold || "N/A"}`);
+        core.info(`Best Practices Threshold: ${this._pgConfig.best_practices_threshold || "N/A"}`);
+        core.info(`SEO Threshold: ${this._pgConfig.seo_threshold || "N/A"}`);
         core.info(`Device: ${this._pgConfig.device}`);
         core.info(`API Key: ${this._pgConfig.apiKey}`);
         core.info(`URLs: ${this.urls}`);
@@ -58,7 +68,23 @@ export default class PageInsightsAnalyzer {
         
         core.info("****************************************************");
 
-        var categories = ['performance', 'accessibility', 'best-practices', 'seo'];
+        var categories = [];
+
+        if(this._pgConfig.performance_threshold) {
+            categories.push('performance');
+        }
+
+        if(this._pgConfig.accessibility_threshold) {
+            categories.push('accessibility');
+        }
+
+        if(this._pgConfig.best_practices_threshold) {
+            categories.push('best-practices');
+        }
+
+        if(this._pgConfig.seo_threshold) {
+            categories.push('seo');
+        }
 
         var pageScores: PageScore[] = [];
 
@@ -72,26 +98,54 @@ export default class PageInsightsAnalyzer {
 
         //add up the scores
         var avgScores: FullScore = {
-            performance: '0',
-            accessibility: '0',
-            "best-practices": '0',
-            seo: '0'
+            performance: 'N/A',
+            accessibility: 'N/A',
+            "best-practices": 'N/A',
+            seo: 'N/A'
         }
 
         if(categories.includes('performance')) {
             avgScores.performance = (pageScores.reduce((acc, val) => acc + parseFloat(val.scores.performance), 0) / pageScores.length).toFixed(2);
+
+            if(this._pgConfig.performance_threshold) {
+                var avgPerformance = parseFloat(avgScores.performance);
+                if(avgPerformance < this._pgConfig.performance_threshold) {
+                    core.setFailed(`Performance threshold not met. Expected: ${this._pgConfig.performance_threshold}, Actual: ${avgPerformance}`);
+                }
+            }
         }
 
         if(categories.includes('accessibility')) {
             avgScores.accessibility = (pageScores.reduce((acc, val) => acc + parseFloat(val.scores.accessibility), 0) / pageScores.length).toFixed(2);
+
+            if(this._pgConfig.accessibility_threshold) {
+                var avgAccessibility = parseFloat(avgScores.accessibility);
+                if(avgAccessibility < this._pgConfig.accessibility_threshold) {
+                    core.setFailed(`Accessibility threshold not met. Expected: ${this._pgConfig.accessibility_threshold}, Actual: ${avgAccessibility}`);
+                }
+            }
         }
 
         if(categories.includes('best-practices')) {
             avgScores["best-practices"] = (pageScores.reduce((acc, val) => acc + parseFloat(val.scores["best-practices"]), 0) / pageScores.length).toFixed(2);
+
+            if(this._pgConfig.best_practices_threshold) {
+                var avgBestPractices = parseFloat(avgScores["best-practices"]);
+                if(avgBestPractices < this._pgConfig.best_practices_threshold) {
+                    core.setFailed(`Best Practices threshold not met. Expected: ${this._pgConfig.best_practices_threshold}, Actual: ${avgBestPractices}`);
+                }
+            }
         }
 
         if(categories.includes('seo')) {
             avgScores.seo = (pageScores.reduce((acc, val) => acc + parseFloat(val.scores.seo), 0) / pageScores.length).toFixed(2);
+
+            if(this._pgConfig.seo_threshold) {
+                var avgSEO = parseFloat(avgScores.seo);
+                if(avgSEO < this._pgConfig.seo_threshold) {
+                    core.setFailed(`SEO threshold not met. Expected: ${this._pgConfig.seo_threshold}, Actual: ${avgSEO}`);
+                }
+            }
         }
 
         core.info("Average Scores:");
