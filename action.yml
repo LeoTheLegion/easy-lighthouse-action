@@ -1,5 +1,9 @@
-name: 'Lighthouse Action'
-description: 'Run Lighthouse audit'
+name: 'Page Insights Action'
+description: |
+    Run Google Page Insights on a list of URLs or a sitemap.
+    Depending on your thresholds, the action will pass or fail.
+    Requires a Google Page Insights API key.
+
 inputs:
   urls:
     description: 'URLs to audit'
