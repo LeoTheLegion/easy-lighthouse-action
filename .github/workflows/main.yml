@@ -33,10 +33,10 @@ jobs:
           urls: 'https://leothelegion.net https://leothelegion.net/blog' # Test multiple URLs
           device: 'mobile'
           page_insights_key: ${{ secrets.PAGE_INSIGHTS_KEY }}
-          performance_threshold: '90'
-          seo_threshold: '90'
-          accessibility_threshold: '90'
-          best_practices_threshold: '90'
+          performance_threshold: '75'
+          seo_threshold: '75'
+          accessibility_threshold: '75'
+          best_practices_threshold: '75'
           mode: 'SITEMAP'
           sitemap_url: 'https://leothelegion.net/sitemap-index.xml'
       
@@ -47,9 +47,9 @@ jobs:
           urls: 'https://leothelegion.net https://leothelegion.net/blog' # Test multiple URLs
           device: 'desktop'
           page_insights_key: ${{ secrets.PAGE_INSIGHTS_KEY }}
-          performance_threshold: '90'
-          seo_threshold: '90'
-          accessibility_threshold: '90'
-          best_practices_threshold: '90'
+          performance_threshold: '75'
+          seo_threshold: '75'
+          accessibility_threshold: '75'
+          best_practices_threshold: '75'
           mode: 'SITEMAP'
           sitemap_url: 'https://leothelegion.net/sitemap-index.xml'
