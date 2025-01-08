@@ -1,12 +1,12 @@
-# README.md
+[![PageInsights CI](https://github.com/LeoTheLegion/easy-lighthouse-action/actions/workflows/main.yml/badge.svg)](https://github.com/LeoTheLegion/easy-lighthouse-action/actions/workflows/main.yml)
 
-# GitHub Action Project
+# Page Insights Action
 
-This project is a custom GitHub Action that automates specific tasks within your GitHub workflows.
+This project is a custom GitHub Action that runs Google Page Insights on a list of URLs or a sitemap.
 
 ## Overview
 
-This GitHub Action is designed to perform [describe the main functionality of the action]. It can be easily integrated into your existing workflows to enhance automation and efficiency.
+This GitHub Action is designed to perform Google Page Insights audits. Depending on your thresholds, the action will pass or fail. It requires a Google Page Insights API key.
 
 ## Getting Started
 
@@ -22,27 +22,35 @@ To use this action in your GitHub workflows, follow these steps:
        steps:
          - name: Checkout code
            uses: actions/checkout@v2
-         - name: Run custom action
-           uses: ./github-action-project
+         - name: Run Page Insights Action
+           uses: ./easy-lighthouse-action
            with:
-             input1: value1
-             input2: value2
+             urls: 'https://example.com'
+             device: 'mobile'
+             page_insights_key: ${{ secrets.PAGE_INSIGHTS_KEY }}
+             performance_threshold: 90
+             seo_threshold: 90
+             accessibility_threshold: 90
+             best_practices_threshold: 90
+             mode: 'SITEMAP'
+             sitemap_url: 'https://example.com/sitemap.xml'
    ```
 
 3. **Configure inputs** as needed based on the action's requirements.
 
 ## Inputs
 
-| Input     | Description                       | Required |
-|-----------|-----------------------------------|----------|
-| `input1`  | Description of input1             | Yes      |
-| `input2`  | Description of input2             | No       |
-
-## Outputs
-
-| Output    | Description                       |
-|-----------|-----------------------------------|
-| `output1` | Description of output1            |
+| Input                      | Description                             | Required |
+|----------------------------|-----------------------------------------|----------|
+| `urls`                     | URLs to audit                           | Yes      |
+| `device`                   | Device to emulate (mobile/desktop)      | Yes      |
+| `page_insights_key`        | Google Page Insights API key            | Yes      |
+| `performance_threshold`    | Performance threshold                   | No       |
+| `seo_threshold`            | SEO threshold                           | No       |
+| `accessibility_threshold`  | Accessibility threshold                 | No       |
+| `best_practices_threshold` | Best practices threshold                | No       |
+| `mode`                     | Mode to run the audit in                | Yes      |
+| `sitemap_url`              | Sitemap URL                             | No       |
 
 ## License
 
