@@ -7,6 +7,7 @@ inputs:
   device:
     description: 'Device to emulate (mobile/desktop)'
     default: 'mobile'
+    required: true
   page_insights_key:
     description: 'Google Page Insights API key'
     required: true
@@ -18,6 +19,12 @@ inputs:
     description: 'Accessibility threshold'
   best_practices_threshold:
     description: 'Best practices threshold'
+  mode:
+    description: 'Mode to run the audit in'
+    default: 'SITEMAP'
+    required: true
+  sitemap_url:
+    description: 'Sitemap URL'
 runs:
   using: 'node16'
   main: 'dist/index.js'

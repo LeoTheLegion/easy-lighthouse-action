@@ -9,6 +9,8 @@ export function getConfig(): ActionConfig {
         performance_threshold: Number(core.getInput('performance_threshold')) || undefined,
         accessibility_threshold: Number(core.getInput('accessibility_threshold')) || undefined,
         best_practices_threshold: Number(core.getInput('best_practices_threshold')) || undefined,
-        seo_threshold: Number(core.getInput('seo_threshold')) || undefined
+        seo_threshold: Number(core.getInput('seo_threshold')) || undefined,
+        mode: core.getInput('mode', { required: true }) as 'SITEMAP' | 'URL_LIST',
+        sitemap_url: core.getInput('sitemap_url') || undefined
     };
 }

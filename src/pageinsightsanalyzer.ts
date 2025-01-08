@@ -1,6 +1,7 @@
 import { RequestQueue } from './RequestQueue';
 import { ActionConfig } from './types';
 import * as core from '@actions/core';
+import { XMLParser } from 'fast-xml-parser';
 
 interface PGConfig {
     device?: 'mobile' | 'desktop';
@@ -36,7 +37,7 @@ export default class PageInsightsAnalyzer {
     private readonly REQUEST_PER_SECOND = 240/60;
     private requestQueue: RequestQueue;
     private urls : string[] = [];
-
+    private IsReady : boolean = false;
 
     constructor(config: ActionConfig) {
         this._pgConfig = {
@@ -48,12 +49,35 @@ export default class PageInsightsAnalyzer {
             seo_threshold: config.seo_threshold
         }
 
-        this.urls = config.urls.split(' ');
+        if(config.mode === 'SITEMAP') {
+            if(!config.sitemap_url) {
+                throw new Error("sitemap_url is required when mode is SITEMAP");
+            }
+            core.info(`Fetching URLs from sitemap: ${config.sitemap_url}`);
+            this.GetSiteMapUrls(config.sitemap_url).then((urls) => {
+                this.urls = urls;
+                core.info(`Found ${urls.length} URLs in sitemap`);
+                this.IsReady = true;
+            }).catch((error) => {
+                throw new Error(error);
+            });
+        } else {
+            if(!config.urls) {
+                throw new Error("urls is required when mode is URL_LIST");
+            }
+            this.urls = config.urls.split(' ');
+            this.IsReady = true;
+        }
 
         this.requestQueue = new RequestQueue(this.REQUEST_PER_SECOND);
     }
     // Run PageInsightsAnalyzer 
     async Run() {
+
+        while(!this.IsReady) {
+            //sleep for 10 ms
+            await new Promise(resolve => setTimeout(resolve, 10));
+        }
 
         core.info(`Running PageInsights Analyzer with the following configuration:`);
         
@@ -63,7 +87,7 @@ export default class PageInsightsAnalyzer {
         core.info(`SEO Threshold: ${this._pgConfig.seo_threshold || "N/A"}`);
         core.info(`Device: ${this._pgConfig.device}`);
         core.info(`API Key: ${this._pgConfig.apiKey}`);
-        core.info(`URLs: ${this.urls}`);
+        core.info(`Mode: ${this.urls.length} URLs to check`);
 
         
         core.info("****************************************************");
@@ -152,6 +176,45 @@ export default class PageInsightsAnalyzer {
         this.PrintScores(avgScores);
         
         core.info("****************************************************");
+    }
+
+    // Get xml sitemap urls
+    private async GetSiteMapUrls(sitemapUrl: string) {
+        // Fetch sitemap
+        const response = await fetch(sitemapUrl);
+        const xmlContent = await response.text();
+
+        // Parse XML
+        const parser = new XMLParser({
+            ignoreAttributes: false,
+            parseTagValue: true
+        });
+        const result = parser.parse(xmlContent);
+
+        const urls: string[] = [];
+
+        // Handle standard sitemap
+        if (result.urlset?.url) {
+            const urlList = Array.isArray(result.urlset.url) 
+                ? result.urlset.url 
+                : [result.urlset.url];
+            
+            urls.push(...urlList.map((u: { loc: any; }) => u.loc));
+        }
+
+        // Handle sitemap index
+        if (result.sitemapindex?.sitemap) {
+            const sitemaps = Array.isArray(result.sitemapindex.sitemap)
+                ? result.sitemapindex.sitemap
+                : [result.sitemapindex.sitemap];
+
+            for (const sitemap of sitemaps) {
+                const childUrls = await this.GetSiteMapUrls(sitemap.loc);
+                urls.push(...childUrls);
+            }
+        }
+
+        return urls;
     }
 
     private PrintScores(scores: FullScore) {

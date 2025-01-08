@@ -37,6 +37,8 @@ jobs:
           seo_threshold: '90'
           accessibility_threshold: '90'
           best_practices_threshold: '90'
+          mode: 'SITEMAP'
+          sitemap_url: 'https://leothelegion.net/sitemap-index.xml'
       
       # Optional: Add another test case
       - name: Run PageInsights Action (Desktop)
@@ -49,3 +51,5 @@ jobs:
           seo_threshold: '90'
           accessibility_threshold: '90'
           best_practices_threshold: '90'
+          mode: 'SITEMAP'
+          sitemap_url: 'https://leothelegion.net/sitemap-index.xml'
