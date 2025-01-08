@@ -255,7 +255,7 @@ export default class PageInsightsAnalyzer {
 
     private async GetStats(url:string, category: string) : Promise<Score> {
         return this.requestQueue.add(async () => {
-            core.info(`checking ${category} for ${url}`);
+            core.debug(`checking ${category} for ${url}`);
             const data = await fetch(`${this.PAGEINSIGHTSURL}?url=${url}&strategy=${this._pgConfig.device}&category=${category}&key=${this._pgConfig.apiKey}`);
             const result = await data.json();
 
