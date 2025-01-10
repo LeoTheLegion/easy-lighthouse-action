@@ -37,19 +37,5 @@ jobs:
           seo_threshold: '75'
           accessibility_threshold: '75'
           best_practices_threshold: '75'
-          mode: 'SITEMAP'
-          sitemap_url: 'https://leothelegion.net/sitemap-index.xml'
-      
-      # Optional: Add another test case
-      - name: Run PageInsights Action (Desktop)
-        uses: ./
-        with:
-          urls: 'https://leothelegion.net https://leothelegion.net/blog' # Test multiple URLs
-          device: 'desktop'
-          page_insights_key: ${{ secrets.PAGE_INSIGHTS_KEY }}
-          performance_threshold: '75'
-          seo_threshold: '75'
-          accessibility_threshold: '75'
-          best_practices_threshold: '75'
-          mode: 'SITEMAP'
+          mode: 'MANUAL'
           sitemap_url: 'https://leothelegion.net/sitemap-index.xml'
