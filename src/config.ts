@@ -3,8 +3,8 @@ import { ActionConfig } from './types';
 
 export function getConfig(): ActionConfig {
     return {
-        urls: core.getInput('urls', { required: true }),
-        device: core.getInput('device') as 'mobile' | 'desktop' || 'mobile',
+        urls: core.getInput('urls'),
+        device: core.getInput('device',{ required: true }) as 'mobile' | 'desktop',
         apiKey : core.getInput('page_insights_key', { required: true }),
         performance_threshold: Number(core.getInput('performance_threshold')) || undefined,
         accessibility_threshold: Number(core.getInput('accessibility_threshold')) || undefined,
