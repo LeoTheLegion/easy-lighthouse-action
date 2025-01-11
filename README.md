@@ -25,7 +25,9 @@ To use this action in your GitHub workflows, follow these steps:
          - name: Run Page Insights Action
            uses: leothelegion/easy-lighthouse-action@preview
            with:
-             urls: 'https://example.com'
+             urls: |
+               https://example.com
+               https://example2.com
              device: 'mobile'
              page_insights_key: ${{ secrets.PAGE_INSIGHTS_KEY }}
              performance_threshold: 90
@@ -42,7 +44,7 @@ To use this action in your GitHub workflows, follow these steps:
 
 | Input                      | Description                             | Required |
 |----------------------------|-----------------------------------------|----------|
-| `urls`                     | URLs to audit                           | Yes      |
+| `urls`                     | URLs to audit (separated by new lines)  | Yes      |
 | `device`                   | Device to emulate (mobile/desktop)      | Yes      |
 | `page_insights_key`        | Google Page Insights API key            | Yes      |
 | `performance_threshold`    | Performance threshold                   | No       |
