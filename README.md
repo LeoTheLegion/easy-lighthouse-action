@@ -23,7 +23,7 @@ To use this action in your GitHub workflows, follow these steps:
          - name: Checkout code
            uses: actions/checkout@v2
          - name: Run Page Insights Action
-           uses: ./easy-lighthouse-action
+           uses: leothelegion/easy-lighthouse-action@preview
            with:
              urls: 'https://example.com'
              device: 'mobile'
@@ -51,6 +51,16 @@ To use this action in your GitHub workflows, follow these steps:
 | `best_practices_threshold` | Best practices threshold                | No       |
 | `mode`                     | Mode to run the audit in                | Yes      |
 | `sitemap_url`              | Sitemap URL                             | No       |
+
+### Device Options
+
+- `MOBILE`
+- `DESKTOP`
+
+### Mode Options
+
+- `SITEMAP`
+- `URL`
 
 ## License
 
