@@ -27914,8 +27914,8 @@ exports.getConfig = void 0;
 const core = __importStar(__nccwpck_require__(7484));
 function getConfig() {
     return {
-        urls: core.getInput('urls', { required: true }),
-        device: core.getInput('device') || 'mobile',
+        urls: core.getInput('urls'),
+        device: core.getInput('device', { required: true }),
         apiKey: core.getInput('page_insights_key', { required: true }),
         performance_threshold: Number(core.getInput('performance_threshold')) || undefined,
         accessibility_threshold: Number(core.getInput('accessibility_threshold')) || undefined,
