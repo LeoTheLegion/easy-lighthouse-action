@@ -6,7 +6,7 @@ This project is a custom GitHub Action that runs Google Page Insights on a list 
 
 ## Overview
 
-This GitHub Action is designed to perform Google Page Insights audits. Depending on your thresholds, the action will pass or fail. It requires a Google Page Insights API key.
+This GitHub Action is designed to perform Google Page Insights audits. Depending on your thresholds, the action will pass or fail. **It requires a Google Page Insights API key**.
 
 ## Getting Started
 
@@ -20,22 +20,19 @@ To use this action in your GitHub workflows, follow these steps:
      example-job:
        runs-on: ubuntu-latest
        steps:
-         - name: Checkout code
-           uses: actions/checkout@v2
          - name: Run Page Insights Action
            uses: leothelegion/easy-lighthouse-action@preview
            with:
-             urls: |
-               https://example.com
-               https://example2.com
              device: 'mobile'
              page_insights_key: ${{ secrets.PAGE_INSIGHTS_KEY }}
              performance_threshold: 90
              seo_threshold: 90
              accessibility_threshold: 90
              best_practices_threshold: 90
-             mode: 'SITEMAP'
-             sitemap_url: 'https://example.com/sitemap.xml'
+             mode: 'MANUAL'
+             urls: |
+               https://example.com
+               https://example2.com
    ```
 
 3. **Configure inputs** as needed based on the action's requirements.
@@ -62,7 +59,58 @@ To use this action in your GitHub workflows, follow these steps:
 ### Mode Options
 
 - `SITEMAP`
-- `URL`
+- `MANUAL`
+
+## Examples
+
+### Using SITEMAP Mode
+
+```yaml
+jobs:
+  example-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Run Page Insights Action
+        uses: leothelegion/easy-lighthouse-action@preview
+        with:
+          urls: |
+            https://example.com
+            https://example2.com
+          device: 'mobile'
+          page_insights_key: ${{ secrets.PAGE_INSIGHTS_KEY }}
+          performance_threshold: 90
+          seo_threshold: 90
+          accessibility_threshold: 90
+          best_practices_threshold: 90
+          mode: 'SITEMAP'
+          sitemap_url: 'https://example.com/sitemap.xml'
+```
+
+### Using MANUAL Mode
+
+```yaml
+jobs:
+  example-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Run Page Insights Action
+        uses: leothelegion/easy-lighthouse-action@preview
+        with:
+          urls: |
+            https://example.com
+            https://example2.com
+          device: 'mobile'
+          page_insights_key: ${{ secrets.PAGE_INSIGHTS_KEY }}
+          performance_threshold: 90
+          seo_threshold: 90
+          accessibility_threshold: 90
+          best_practices_threshold: 90
+          mode: 'MANUAL'
+```
 
 ## License
 
