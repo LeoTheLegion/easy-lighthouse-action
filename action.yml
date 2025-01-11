@@ -6,7 +6,7 @@ description: |
 
 inputs:
   urls:
-    description: 'URLs to audit'
+    description: 'URLs to audit (separated by new lines)'
   device:
     description: 'Device to emulate (mobile/desktop)'
     default: 'mobile'
