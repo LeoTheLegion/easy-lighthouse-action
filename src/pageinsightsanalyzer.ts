@@ -65,7 +65,8 @@ export default class PageInsightsAnalyzer {
             if(!config.urls) {
                 throw new Error("urls is required when mode is URL_LIST");
             }
-            this.urls = config.urls.split(' ');
+            //split the urls by new line and trim them
+            this.urls = config.urls.split('\n').map((url) => url.trim());
             this.IsReady = true;
         }
 
