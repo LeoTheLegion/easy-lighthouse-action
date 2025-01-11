@@ -1,7 +1,7 @@
 {
   "name": "easy-lighthouse-action",
   "version": "1.0.0",
-  "description": "GitHub Action for running Lighthouse checks with thresholds and sitemap support",
+  "description": "A GitHub Action to run Lighthouse audits on your web pages",
   "main": "dist/index.js",
   "scripts": {
     "build": "ncc build src/index.ts -o dist",
