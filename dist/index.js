@@ -28087,7 +28087,8 @@ class PageInsightsAnalyzer {
             if (!config.urls) {
                 throw new Error("urls is required when mode is URL_LIST");
             }
-            this.urls = config.urls.split(' ');
+            //split the urls by new line and trim them
+            this.urls = config.urls.split('\n').map((url) => url.trim());
             this.IsReady = true;
         }
         this.requestQueue = new RequestQueue_1.RequestQueue(this.REQUEST_PER_SECOND);
@@ -28245,17 +28246,38 @@ class PageInsightsAnalyzer {
     }
     GetStats(url, category) {
         return __awaiter(this, void 0, void 0, function* () {
+            const maxRetries = 3;
+            const retryDelay = 1000; // 1 second
             return this.requestQueue.add(() => __awaiter(this, void 0, void 0, function* () {
-                core.debug(`checking ${category} for ${url}`);
-                const data = yield fetch(`${this.PAGEINSIGHTSURL}?url=${url}&strategy=${this._pgConfig.device}&category=${category}&key=${this._pgConfig.apiKey}`);
-                const result = yield data.json();
-                if (result.error) {
-                    throw new Error(result.error.message);
+                let lastError;
+                for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                    try {
+                        core.debug(`Attempt ${attempt}/${maxRetries} checking ${category} for ${url}`);
+                        const data = yield fetch(`${this.PAGEINSIGHTSURL}?url=${url}&strategy=${this._pgConfig.device}&category=${category}&key=${this._pgConfig.apiKey}`);
+                        const result = yield data.json();
+                        if (result.error) {
+                            throw new Error(JSON.stringify(result.error));
+                        }
+                        return {
+                            category: category,
+                            value: result.lighthouseResult.categories[category].score * 100
+                        };
+                    }
+                    catch (error) {
+                        lastError = error;
+                        if (error instanceof Error) {
+                            core.warning(`Attempt ${attempt} failed for ${url}: ${error.message}`);
+                        }
+                        else {
+                            core.warning(`Attempt ${attempt} failed for ${url}: ${String(error)}`);
+                        }
+                        if (attempt < maxRetries) {
+                            yield new Promise(resolve => setTimeout(resolve, retryDelay));
+                            continue;
+                        }
+                    }
                 }
-                return {
-                    category: category,
-                    value: result.lighthouseResult.categories[category].score * 100
-                };
+                throw new Error(`Failed after ${maxRetries} attempts for ${url}: ${lastError.message}`);
             }));
         });
     }
