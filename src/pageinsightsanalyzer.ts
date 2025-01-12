@@ -261,7 +261,10 @@ export default class PageInsightsAnalyzer {
             const result = await data.json();
 
             if (result.error) {
-                throw new Error(result.error.message);
+
+                throw new Error(
+                    `${result.error.message} : \n 
+                    ${JSON.stringify(result.error)}`);
             }
 
             return {
