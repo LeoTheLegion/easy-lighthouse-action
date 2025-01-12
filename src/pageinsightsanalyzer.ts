@@ -254,23 +254,43 @@ export default class PageInsightsAnalyzer {
         return final_score;
     }
 
-    private async GetStats(url:string, category: string) : Promise<Score> {
+    private async GetStats(url: string, category: string): Promise<Score> {
+        const maxRetries = 3;
+        const retryDelay = 1000; // 1 second
+    
         return this.requestQueue.add(async () => {
-            core.debug(`checking ${category} for ${url}`);
-            const data = await fetch(`${this.PAGEINSIGHTSURL}?url=${url}&strategy=${this._pgConfig.device}&category=${category}&key=${this._pgConfig.apiKey}`);
-            const result = await data.json();
-
-            if (result.error) {
-
-                throw new Error(
-                    `${result.error.message} : \n 
-                    ${JSON.stringify(result.error)}`);
+            let lastError: any;
+            
+            for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                try {
+                    core.debug(`Attempt ${attempt}/${maxRetries} checking ${category} for ${url}`);
+                    const data = await fetch(`${this.PAGEINSIGHTSURL}?url=${url}&strategy=${this._pgConfig.device}&category=${category}&key=${this._pgConfig.apiKey}`);
+                    const result = await data.json();
+    
+                    if (result.error) {
+                        throw new Error(JSON.stringify(result.error));
+                    }
+    
+                    return {
+                        category: category,
+                        value: result.lighthouseResult.categories[category].score * 100
+                    };
+                } catch (error) {
+                    lastError = error;
+                    if (error instanceof Error) {
+                        core.warning(`Attempt ${attempt} failed for ${url}: ${error.message}`);
+                    } else {
+                        core.warning(`Attempt ${attempt} failed for ${url}: ${String(error)}`);
+                    }
+                    
+                    if (attempt < maxRetries) {
+                        await new Promise(resolve => setTimeout(resolve, retryDelay));
+                        continue;
+                    }
+                }
             }
-
-            return {
-                category: category,
-                value: result.lighthouseResult.categories[category].score * 100
-            };
+    
+            throw new Error(`Failed after ${maxRetries} attempts for ${url}: ${lastError.message}`);
         });
     }
 
