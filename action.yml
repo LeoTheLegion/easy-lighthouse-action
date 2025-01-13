@@ -28,6 +28,11 @@ inputs:
     required: true
   sitemap_url:
     description: 'Sitemap URL'
+outputs:
+  scores:
+    description: 'Scores for each URL'
+  average_scores:
+    description: 'Average scores for all URLs'
 runs:
   using: 'node16'
   main: 'dist/index.js'

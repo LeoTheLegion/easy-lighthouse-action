@@ -177,6 +177,12 @@ export default class PageInsightsAnalyzer {
         this.PrintScores(avgScores);
         
         core.info("****************************************************");
+
+        //output the scores as json object for actions to use
+        core.setOutput("scores", JSON.stringify(pageScores));
+
+        //output the average scores as json object for actions to use
+        core.setOutput("average_scores", JSON.stringify(avgScores));
     }
 
     // Get xml sitemap urls
