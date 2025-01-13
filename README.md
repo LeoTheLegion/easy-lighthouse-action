@@ -61,6 +61,40 @@ To use this action in your GitHub workflows, follow these steps:
 - `SITEMAP`
 - `MANUAL`
 
+## Outputs
+
+| Output           | Description                        |
+|------------------|------------------------------------|
+| `scores`         | Scores for each URL                |
+| `average_scores` | Average scores for all URLs        |
+
+### Example of `scores` Output
+
+```json
+[
+  {
+    "url": "https://example.com",
+    "scores": {
+      "performance": "100",
+      "accessibility": "100",
+      "best-practices": "96",
+      "seo": "100"
+    }
+  }
+]
+```
+
+### Example of `average_scores` Output
+
+```json
+{
+  "performance": "100.00",
+  "accessibility": "100.00",
+  "best-practices": "96.00",
+  "seo": "100.00"
+}
+```
+
 ## Examples
 
 ### Using SITEMAP Mode
