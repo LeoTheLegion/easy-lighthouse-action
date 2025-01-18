@@ -48,6 +48,34 @@ jobs:
           show_table: true
 
       # Test the action using itself
+      - name: Run PageInsights Action (Manual - PS)
+        uses: ./
+        with:
+          device: 'DESKTOP'
+          page_insights_key: ${{ secrets.PAGE_INSIGHTS_KEY }}
+          performance_threshold: '75'
+          seo_threshold: '75'
+          mode: 'MANUAL'
+          urls: |
+            https://leothelegion.net
+            https://leothelegion.net/blog
+          show_table: true
+      
+      # Test the action using itself
+      - name: Run PageInsights Action (Manual - AB)
+        uses: ./
+        with:
+          device: 'DESKTOP'
+          page_insights_key: ${{ secrets.PAGE_INSIGHTS_KEY }}
+          accessibility_threshold: '75'
+          best_practices_threshold: '75'
+          mode: 'MANUAL'
+          urls: |
+            https://leothelegion.net
+            https://leothelegion.net/blog
+          show_table: true
+
+      # Test the action using itself
       # - name: Run PageInsights Action (Sitemap)
       #   uses: ./
       #   with:
