@@ -310,29 +310,25 @@ export default class PageInsightsAnalyzer {
 
 
     private async printPageScoresAsTable(pageScores: PageScore[]) {
-        var table = [
-            ["URL", "Performance", "Accessibility", "Best Practices", "SEO"]
-        ];
 
-        pageScores.forEach((score) => {
-            table.push([score.url, score.scores.performance, score.scores.accessibility, score.scores["best-practices"], score.scores.seo]);
-        });
-
-        const tableStr = this.tableToString(table);
-
-        // Append to GITHUB_STEP_SUMMARY
-        const summaryPath = process.env.GITHUB_STEP_SUMMARY;
-        if (summaryPath) {
-            await fs.appendFile(summaryPath, `## Lighthouse Scores\n${tableStr}\n`);
-        }
-    }
-
-    private tableToString(table: string[][]) {
-        if (table.length === 0) return "";
-        
-        const rows = table.map(row => `| ${row.join(" | ")} |`);
-        const separator = `| ${table[0].map(() => "---").join(" | ")} |`;
-        
-        return [rows[0], separator, ...rows.slice(1)].join("\n");
+        await core.summary
+        .addHeading('Lighthouse Scores')
+        .addTable([
+            [
+                { data: 'URL', header: true },
+                { data: 'Performance', header: true },
+                { data: 'Accessibility', header: true },
+                { data: 'Best Practices', header: true },
+                { data: 'SEO', header: true }
+            ],
+            ...pageScores.map(score => [
+                score.url, 
+                score.scores.performance, 
+                score.scores.accessibility, 
+                score.scores["best-practices"], 
+                score.scores.seo
+            ])
+        ])
+        .write();
     }
 }
