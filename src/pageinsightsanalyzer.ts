@@ -317,7 +317,7 @@ export default class PageInsightsAnalyzer {
             table.push([score.url, score.scores.performance, score.scores.accessibility, score.scores["best-practices"], score.scores.seo]);
         });
 
-        core.info(this.tableToString(table));
+        core.notice(this.tableToString(table));
     }
 
     private tableToString(table: string[][]) {
