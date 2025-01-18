@@ -390,7 +390,7 @@ export default class PageInsightsAnalyzer {
 
         // Filter headers based on non-null thresholds
         const activeScoreTypes = scoreTypes.filter(
-            (type) => thresholds[type.key as keyof typeof thresholds] !== null
+            (type) => thresholds[type.key as keyof typeof thresholds] !== undefined
         );
 
         // Create headers
