@@ -27922,7 +27922,8 @@ function getConfig() {
         best_practices_threshold: Number(core.getInput('best_practices_threshold')) || undefined,
         seo_threshold: Number(core.getInput('seo_threshold')) || undefined,
         mode: core.getInput('mode', { required: true }),
-        sitemap_url: core.getInput('sitemap_url') || undefined
+        sitemap_url: core.getInput('sitemap_url') || undefined,
+        show_table: core.getInput('show_table') === 'true'
     };
 }
 exports.getConfig = getConfig;
@@ -28068,18 +28069,21 @@ class PageInsightsAnalyzer {
             performance_threshold: config.performance_threshold,
             accessibility_threshold: config.accessibility_threshold,
             best_practices_threshold: config.best_practices_threshold,
-            seo_threshold: config.seo_threshold
+            seo_threshold: config.seo_threshold,
+            show_table: config.show_table,
         };
-        if (config.mode === 'SITEMAP') {
+        if (config.mode === "SITEMAP") {
             if (!config.sitemap_url) {
                 throw new Error("sitemap_url is required when mode is SITEMAP");
             }
             core.info(`Fetching URLs from sitemap: ${config.sitemap_url}`);
-            this.GetSiteMapUrls(config.sitemap_url).then((urls) => {
+            this.GetSiteMapUrls(config.sitemap_url)
+                .then((urls) => {
                 this.urls = urls;
                 core.info(`Found ${urls.length} URLs in sitemap`);
                 this.IsReady = true;
-            }).catch((error) => {
+            })
+                .catch((error) => {
                 throw new Error(error);
             });
         }
@@ -28088,17 +28092,17 @@ class PageInsightsAnalyzer {
                 throw new Error("urls is required when mode is URL_LIST");
             }
             //split the urls by new line and trim them
-            this.urls = config.urls.split('\n').map((url) => url.trim());
+            this.urls = config.urls.split("\n").map((url) => url.trim());
             this.IsReady = true;
         }
         this.requestQueue = new RequestQueue_1.RequestQueue(this.REQUEST_PER_SECOND);
     }
-    // Run PageInsightsAnalyzer 
+    // Run PageInsightsAnalyzer
     Run() {
         return __awaiter(this, void 0, void 0, function* () {
             while (!this.IsReady) {
                 //sleep for 10 ms
-                yield new Promise(resolve => setTimeout(resolve, 10));
+                yield new Promise((resolve) => setTimeout(resolve, 10));
             }
             core.info(`Running PageInsights Analyzer with the following configuration:`);
             core.info(`Performance Threshold: ${this._pgConfig.performance_threshold || "N/A"}`);
@@ -28111,33 +28115,33 @@ class PageInsightsAnalyzer {
             core.info("****************************************************");
             var categories = [];
             if (this._pgConfig.performance_threshold) {
-                categories.push('performance');
+                categories.push("performance");
             }
             if (this._pgConfig.accessibility_threshold) {
-                categories.push('accessibility');
+                categories.push("accessibility");
             }
             if (this._pgConfig.best_practices_threshold) {
-                categories.push('best-practices');
+                categories.push("best-practices");
             }
             if (this._pgConfig.seo_threshold) {
-                categories.push('seo');
+                categories.push("seo");
             }
             var pageScores = [];
             for (let i = 0; i < this.urls.length; i++) {
                 var scores = yield this.CheckPage(this.urls[i], categories);
                 pageScores.push({
                     url: this.urls[i],
-                    scores: scores
+                    scores: scores,
                 });
             }
             //add up the scores
             var avgScores = {
-                performance: 'N/A',
-                accessibility: 'N/A',
-                "best-practices": 'N/A',
-                seo: 'N/A'
+                performance: "N/A",
+                accessibility: "N/A",
+                "best-practices": "N/A",
+                seo: "N/A",
             };
-            if (categories.includes('performance')) {
+            if (categories.includes("performance")) {
                 avgScores.performance = (pageScores.reduce((acc, val) => acc + parseFloat(val.scores.performance), 0) / pageScores.length).toFixed(2);
                 if (this._pgConfig.performance_threshold) {
                     var avgPerformance = parseFloat(avgScores.performance);
@@ -28146,7 +28150,7 @@ class PageInsightsAnalyzer {
                     }
                 }
             }
-            if (categories.includes('accessibility')) {
+            if (categories.includes("accessibility")) {
                 avgScores.accessibility = (pageScores.reduce((acc, val) => acc + parseFloat(val.scores.accessibility), 0) / pageScores.length).toFixed(2);
                 if (this._pgConfig.accessibility_threshold) {
                     var avgAccessibility = parseFloat(avgScores.accessibility);
@@ -28155,7 +28159,7 @@ class PageInsightsAnalyzer {
                     }
                 }
             }
-            if (categories.includes('best-practices')) {
+            if (categories.includes("best-practices")) {
                 avgScores["best-practices"] = (pageScores.reduce((acc, val) => acc + parseFloat(val.scores["best-practices"]), 0) / pageScores.length).toFixed(2);
                 if (this._pgConfig.best_practices_threshold) {
                     var avgBestPractices = parseFloat(avgScores["best-practices"]);
@@ -28164,7 +28168,7 @@ class PageInsightsAnalyzer {
                     }
                 }
             }
-            if (categories.includes('seo')) {
+            if (categories.includes("seo")) {
                 avgScores.seo = (pageScores.reduce((acc, val) => acc + parseFloat(val.scores.seo), 0) / pageScores.length).toFixed(2);
                 if (this._pgConfig.seo_threshold) {
                     var avgSEO = parseFloat(avgScores.seo);
@@ -28180,6 +28184,10 @@ class PageInsightsAnalyzer {
             core.setOutput("scores", JSON.stringify(pageScores));
             //output the average scores as json object for actions to use
             core.setOutput("average_scores", JSON.stringify(avgScores));
+            //print the scores as table
+            if (this._pgConfig.show_table) {
+                yield this.printPageScoresAsTable(pageScores);
+            }
         });
     }
     // Get xml sitemap urls
@@ -28192,7 +28200,7 @@ class PageInsightsAnalyzer {
             // Parse XML
             const parser = new fast_xml_parser_1.XMLParser({
                 ignoreAttributes: false,
-                parseTagValue: true
+                parseTagValue: true,
             });
             const result = parser.parse(xmlContent);
             const urls = [];
@@ -28237,12 +28245,12 @@ class PageInsightsAnalyzer {
             }
             var score_Results = yield Promise.all(r_scores);
             var final_score = {
-                performance: 'N/A',
-                accessibility: 'N/A',
-                "best-practices": 'N/A',
-                seo: 'N/A'
+                performance: "N/A",
+                accessibility: "N/A",
+                "best-practices": "N/A",
+                seo: "N/A",
             };
-            score_Results.forEach(s => {
+            score_Results.forEach((s) => {
                 final_score[s.category] = s.value.toString();
             });
             return final_score;
@@ -28264,7 +28272,8 @@ class PageInsightsAnalyzer {
                         }
                         return {
                             category: category,
-                            value: result.lighthouseResult.categories[category].score * 100
+                            value: result.lighthouseResult.categories[category].score *
+                                100,
                         };
                     }
                     catch (error) {
@@ -28276,7 +28285,7 @@ class PageInsightsAnalyzer {
                             core.warning(`Attempt ${attempt} failed for ${url}: ${String(error)}`);
                         }
                         if (attempt < maxRetries) {
-                            yield new Promise(resolve => setTimeout(resolve, retryDelay));
+                            yield new Promise((resolve) => setTimeout(resolve, retryDelay));
                             continue;
                         }
                     }
@@ -28284,6 +28293,64 @@ class PageInsightsAnalyzer {
                 throw new Error(`Failed after ${maxRetries} attempts for ${url}: ${lastError.message}`);
             }));
         });
+    }
+    printPageScoresAsTable(pageScores) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const thresholds = {
+                performance: this._pgConfig.performance_threshold,
+                accessibility: this._pgConfig.accessibility_threshold,
+                "best-practices": this._pgConfig.best_practices_threshold,
+                seo: this._pgConfig.seo_threshold,
+            };
+            // Define score types and their corresponding threshold keys
+            const scoreTypes = [
+                { key: "performance", label: "Performance" },
+                { key: "accessibility", label: "Accessibility" },
+                { key: "best-practices", label: "Best Practices" },
+                { key: "seo", label: "SEO" },
+            ];
+            // Filter headers based on non-null thresholds
+            const activeScoreTypes = scoreTypes.filter((type) => thresholds[type.key] !== undefined);
+            // Create headers
+            const headers = [
+                { data: "URL", header: true },
+                ...activeScoreTypes.map((type) => ({
+                    data: type.label,
+                    header: true,
+                })),
+            ];
+            // Create rows
+            const rows = pageScores.map((score) => [
+                score.url,
+                ...activeScoreTypes.map((type) => {
+                    const value = type.key === "best-practices"
+                        ? score.scores["best-practices"]
+                        : score.scores[type.key];
+                    const threshold = thresholds[type.key];
+                    const indicator = this.getScoreIndicator(value, threshold !== null && threshold !== void 0 ? threshold : 0);
+                    return `${value} ${indicator}`;
+                }),
+            ]);
+            yield core.summary
+                .addHeading("Lighthouse Scores")
+                .addTable([headers, ...rows])
+                .write();
+        });
+    }
+    getScoreIndicator(score, threshold) {
+        const scoreValue = parseFloat(score);
+        const margin = 5;
+        // If the score is 100, it's a pass
+        if (scoreValue == 100)
+            return "✅";
+        // If the score is less than the threshold, it's a fail
+        if (scoreValue < threshold)
+            return "❌";
+        // If the score is within the margin of the threshold, it's a warning
+        if (scoreValue <= threshold + margin)
+            return "⚠️";
+        // Otherwise, it's a pass
+        return "✅";
     }
 }
 exports["default"] = PageInsightsAnalyzer;
