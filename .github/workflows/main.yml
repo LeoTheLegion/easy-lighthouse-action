@@ -45,16 +45,17 @@ jobs:
           urls: |
             https://leothelegion.net
             https://leothelegion.net/blog
+          show_table: true
 
       # Test the action using itself
-      - name: Run PageInsights Action (Sitemap)
-        uses: ./
-        with:
-          device: 'DESKTOP'
-          page_insights_key: ${{ secrets.PAGE_INSIGHTS_KEY }}
-          performance_threshold: '75'
-          seo_threshold: '75'
-          accessibility_threshold: '75'
-          best_practices_threshold: '75'
-          mode: 'SITEMAP'
-          sitemap_url: 'https://leothelegion.net/sitemap-index.xml'
+      # - name: Run PageInsights Action (Sitemap)
+      #   uses: ./
+      #   with:
+      #     device: 'DESKTOP'
+      #     page_insights_key: ${{ secrets.PAGE_INSIGHTS_KEY }}
+      #     performance_threshold: '75'
+      #     seo_threshold: '75'
+      #     accessibility_threshold: '75'
+      #     best_practices_threshold: '75'
+      #     mode: 'SITEMAP'
+      #     sitemap_url: 'https://leothelegion.net/sitemap-index.xml'
