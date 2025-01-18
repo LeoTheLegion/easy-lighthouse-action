@@ -11,7 +11,7 @@ interface PGConfig {
     accessibility_threshold?: number;
     best_practices_threshold?: number;
     seo_threshold?: number;
-    show_table?: boolean;
+    show_table_in_summary?: boolean;
 }
 
 interface Score {
@@ -49,7 +49,7 @@ export default class PageInsightsAnalyzer {
             accessibility_threshold: config.accessibility_threshold,
             best_practices_threshold: config.best_practices_threshold,
             seo_threshold: config.seo_threshold,
-            show_table: config.show_table,
+            show_table_in_summary: config.show_table_in_summary,
         };
 
         if (config.mode === "SITEMAP") {
@@ -233,7 +233,7 @@ export default class PageInsightsAnalyzer {
         core.setOutput("average_scores", JSON.stringify(avgScores));
 
         //print the scores as table
-        if (this._pgConfig.show_table) {
+        if (this._pgConfig.show_table_in_summary) {
             await this.printPageScoresAsTable(pageScores);
         }
     }

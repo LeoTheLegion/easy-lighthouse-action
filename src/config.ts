@@ -12,6 +12,6 @@ export function getConfig(): ActionConfig {
         seo_threshold: Number(core.getInput('seo_threshold')) || undefined,
         mode: core.getInput('mode', { required: true }) as 'SITEMAP' | 'URL_LIST',
         sitemap_url: core.getInput('sitemap_url') || undefined,
-        show_table: core.getInput('show_table') === 'true'
+        show_table_in_summary: core.getInput('show_table_in_summary') === 'true'
     };
 }
