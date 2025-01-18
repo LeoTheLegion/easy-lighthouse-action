@@ -405,16 +405,28 @@ export default class PageInsightsAnalyzer {
         // Create rows
         const rows = pageScores.map((score) => [
             score.url,
-            ...activeScoreTypes.map((type) =>
-                type.key === "best-practices"
+            ...activeScoreTypes.map((type) => {
+                const value = type.key === "best-practices"
                     ? score.scores["best-practices"]
-                    : score.scores[type.key as keyof FullScore]
-            ),
+                    : score.scores[type.key as keyof FullScore];
+                const threshold = thresholds[type.key as keyof typeof thresholds];
+                const indicator = this.getScoreIndicator(value, threshold ?? 0);
+                return `${value} ${indicator}`;
+            }),
         ]);
 
         await core.summary
             .addHeading("Lighthouse Scores")
             .addTable([headers, ...rows])
             .write();
+    }
+
+    private getScoreIndicator(score: string, threshold: number): string {
+        const scoreValue = parseFloat(score);
+        const margin = 5;
+        
+        if (scoreValue < threshold) return "❌";
+        if (scoreValue <= threshold + margin) return "⚠️";
+        return "✅";
     }
 }
