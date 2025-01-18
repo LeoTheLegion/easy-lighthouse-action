@@ -2,6 +2,7 @@ import { RequestQueue } from './RequestQueue';
 import { ActionConfig } from './types';
 import * as core from '@actions/core';
 import { XMLParser } from 'fast-xml-parser';
+import * as fs from 'fs/promises';
 
 interface PGConfig {
     device?: 'mobile' | 'desktop';
@@ -188,7 +189,7 @@ export default class PageInsightsAnalyzer {
 
         //print the scores as table
         if(this._pgConfig.show_table) {
-            this.printPageScoresAsTable(pageScores);
+            await this.printPageScoresAsTable(pageScores);
         }
     }
 
@@ -308,7 +309,7 @@ export default class PageInsightsAnalyzer {
     }
 
 
-    private printPageScoresAsTable(pageScores: PageScore[]) {
+    private async printPageScoresAsTable(pageScores: PageScore[]) {
         var table = [
             ["URL", "Performance", "Accessibility", "Best Practices", "SEO"]
         ];
@@ -317,7 +318,13 @@ export default class PageInsightsAnalyzer {
             table.push([score.url, score.scores.performance, score.scores.accessibility, score.scores["best-practices"], score.scores.seo]);
         });
 
-        core.notice(this.tableToString(table));
+        const tableStr = this.tableToString(table);
+
+        // Append to GITHUB_STEP_SUMMARY
+        const summaryPath = process.env.GITHUB_STEP_SUMMARY;
+        if (summaryPath) {
+            await fs.appendFile(summaryPath, `## Lighthouse Scores\n${tableStr}\n`);
+        }
     }
 
     private tableToString(table: string[][]) {
