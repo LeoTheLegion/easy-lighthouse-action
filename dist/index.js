@@ -27923,7 +27923,7 @@ function getConfig() {
         seo_threshold: Number(core.getInput('seo_threshold')) || undefined,
         mode: core.getInput('mode', { required: true }),
         sitemap_url: core.getInput('sitemap_url') || undefined,
-        show_table: core.getInput('show_table') === 'true'
+        show_table_in_summary: core.getInput('show_table_in_summary') === 'true'
     };
 }
 exports.getConfig = getConfig;
@@ -28070,7 +28070,7 @@ class PageInsightsAnalyzer {
             accessibility_threshold: config.accessibility_threshold,
             best_practices_threshold: config.best_practices_threshold,
             seo_threshold: config.seo_threshold,
-            show_table: config.show_table,
+            show_table_in_summary: config.show_table_in_summary,
         };
         if (config.mode === "SITEMAP") {
             if (!config.sitemap_url) {
@@ -28185,7 +28185,7 @@ class PageInsightsAnalyzer {
             //output the average scores as json object for actions to use
             core.setOutput("average_scores", JSON.stringify(avgScores));
             //print the scores as table
-            if (this._pgConfig.show_table) {
+            if (this._pgConfig.show_table_in_summary) {
                 yield this.printPageScoresAsTable(pageScores);
             }
         });
