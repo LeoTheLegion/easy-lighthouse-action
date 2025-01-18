@@ -2,7 +2,6 @@ import { RequestQueue } from "./RequestQueue";
 import { ActionConfig } from "./types";
 import * as core from "@actions/core";
 import { XMLParser } from "fast-xml-parser";
-import * as fs from "fs/promises";
 
 interface PGConfig {
     device?: "mobile" | "desktop";
