@@ -424,9 +424,17 @@ export default class PageInsightsAnalyzer {
     private getScoreIndicator(score: string, threshold: number): string {
         const scoreValue = parseFloat(score);
         const margin = 5;
+
+        // If the score is 100, it's a pass
+        if (scoreValue == 100) return "✅";
         
+        // If the score is less than the threshold, it's a fail
         if (scoreValue < threshold) return "❌";
+
+        // If the score is within the margin of the threshold, it's a warning
         if (scoreValue <= threshold + margin) return "⚠️";
+
+        // Otherwise, it's a pass
         return "✅";
     }
 }
