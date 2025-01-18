@@ -10,6 +10,7 @@ interface PGConfig {
     accessibility_threshold?: number;
     best_practices_threshold?: number;
     seo_threshold?: number;
+    show_table?: boolean;
 }
 
 interface Score{
@@ -46,7 +47,8 @@ export default class PageInsightsAnalyzer {
             performance_threshold: config.performance_threshold,
             accessibility_threshold: config.accessibility_threshold,
             best_practices_threshold: config.best_practices_threshold,
-            seo_threshold: config.seo_threshold
+            seo_threshold: config.seo_threshold,
+            show_table: config.show_table
         }
 
         if(config.mode === 'SITEMAP') {
@@ -183,6 +185,11 @@ export default class PageInsightsAnalyzer {
 
         //output the average scores as json object for actions to use
         core.setOutput("average_scores", JSON.stringify(avgScores));
+
+        //print the scores as table
+        if(this._pgConfig.show_table) {
+            this.printPageScoresAsTable(pageScores);
+        }
     }
 
     // Get xml sitemap urls
