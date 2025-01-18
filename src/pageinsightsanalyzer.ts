@@ -323,17 +323,9 @@ export default class PageInsightsAnalyzer {
     private tableToString(table: string[][]) {
         if (table.length === 0) return "";
         
-        // Create header
-        let tableString = "| " + table[0].join(" | ") + " |\n";
+        const rows = table.map(row => `| ${row.join(" | ")} |`);
+        const separator = `| ${table[0].map(() => "---").join(" | ")} |`;
         
-        // Add separator row
-        tableString += "| " + table[0].map(() => "---").join(" | ") + " |\n";
-        
-        // Add data rows
-        for (let i = 1; i < table.length; i++) {
-            tableString += "| " + table[i].join(" | ") + " |\n";
-        }
-    
-        return tableString;
+        return [rows[0], separator, ...rows.slice(1)].join("\n");
     }
 }
