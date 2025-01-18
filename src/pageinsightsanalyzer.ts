@@ -300,4 +300,33 @@ export default class PageInsightsAnalyzer {
         });
     }
 
+
+    private printPageScoresAsTable(pageScores: PageScore[]) {
+        var table = [
+            ["URL", "Performance", "Accessibility", "Best Practices", "SEO"]
+        ];
+
+        pageScores.forEach((score) => {
+            table.push([score.url, score.scores.performance, score.scores.accessibility, score.scores["best-practices"], score.scores.seo]);
+        });
+
+        core.info(this.tableToString(table));
+    }
+
+    private tableToString(table: string[][]) {
+        if (table.length === 0) return "";
+        
+        // Create header
+        let tableString = "| " + table[0].join(" | ") + " |\n";
+        
+        // Add separator row
+        tableString += "| " + table[0].map(() => "---").join(" | ") + " |\n";
+        
+        // Add data rows
+        for (let i = 1; i < table.length; i++) {
+            tableString += "| " + table[i].join(" | ") + " |\n";
+        }
+    
+        return tableString;
+    }
 }

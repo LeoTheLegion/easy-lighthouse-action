@@ -28,6 +28,9 @@ inputs:
     required: true
   sitemap_url:
     description: 'Sitemap URL'
+  show_table:
+    description: 'Show table with scores'
+    default: 'false'
 outputs:
   scores:
     description: 'Scores for each URL'

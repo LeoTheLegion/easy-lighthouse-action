@@ -10,4 +10,5 @@ export interface ActionConfig {
     seo_threshold?: number;
     mode: 'SITEMAP' | 'URL_LIST';
     sitemap_url?: string;
+    show_table?: boolean;
 }
