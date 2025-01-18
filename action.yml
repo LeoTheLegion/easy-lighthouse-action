@@ -28,7 +28,7 @@ inputs:
     required: true
   sitemap_url:
     description: 'Sitemap URL'
-  show_table:
+  show_table_in_summary:
     description: 'Show table with scores'
     default: 'false'
 outputs:

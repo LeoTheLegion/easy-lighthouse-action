@@ -45,7 +45,7 @@ jobs:
           urls: |
             https://leothelegion.net
             https://leothelegion.net/blog
-          show_table: true
+          show_table_in_summary: true
 
       # Test the action using itself
       - name: Run PageInsights Action (Manual - PS)
@@ -59,7 +59,7 @@ jobs:
           urls: |
             https://leothelegion.net
             https://leothelegion.net/blog
-          show_table: true
+          show_table_in_summary: true
       
       # Test the action using itself
       - name: Run PageInsights Action (Manual - AB)
@@ -73,7 +73,7 @@ jobs:
           urls: |
             https://leothelegion.net
             https://leothelegion.net/blog
-          show_table: true
+          show_table_in_summary: true
 
       # Test the action using itself
       # - name: Run PageInsights Action (Sitemap)
