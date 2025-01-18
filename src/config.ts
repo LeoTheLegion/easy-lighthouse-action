@@ -11,6 +11,7 @@ export function getConfig(): ActionConfig {
         best_practices_threshold: Number(core.getInput('best_practices_threshold')) || undefined,
         seo_threshold: Number(core.getInput('seo_threshold')) || undefined,
         mode: core.getInput('mode', { required: true }) as 'SITEMAP' | 'URL_LIST',
-        sitemap_url: core.getInput('sitemap_url') || undefined
+        sitemap_url: core.getInput('sitemap_url') || undefined,
+        show_table_in_summary: core.getInput('show_table_in_summary') === 'true'
     };
 }
