@@ -16,7 +16,6 @@ export class RequestQueue {
     async add<T>(request: () => Promise<T>): Promise<T> {
         return new Promise((resolve, reject) => {
             this.queue.push({ request, resolve, reject });
-            //this.process();
         });
     }
 
