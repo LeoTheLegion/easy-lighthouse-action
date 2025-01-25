@@ -129,11 +129,21 @@ export default class PageInsightsAnalyzer {
 
         var pageScores: PageScore[] = [];
 
+        var scoresPromises = [];
+
         for (let i = 0; i < this.urls.length; i++) {
-            var scores = await this.CheckPage(this.urls[i], categories);
+            var scoresPromise = this.CheckPage(this.urls[i], categories);
+            scoresPromises.push(scoresPromise);
+        }
+
+        this.requestQueue.process();
+
+        var scores : FullScore[] = await Promise.all(scoresPromises);
+        
+        for (let i = 0; i < this.urls.length; i++) {
             pageScores.push({
                 url: this.urls[i],
-                scores: scores,
+                scores: scores[i],
             });
         }
 
