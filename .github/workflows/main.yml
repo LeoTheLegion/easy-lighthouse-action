@@ -122,3 +122,4 @@ jobs:
           draft: false
           prerelease: false
           files: dist.zip
+          token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
