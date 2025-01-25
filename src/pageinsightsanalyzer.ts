@@ -297,8 +297,8 @@ export default class PageInsightsAnalyzer {
         url: string,
         categories: string[]
     ): Promise<FullScore> {
-        core.info(`Querying PageInsights for URL: ${url}`);
         var scores = await this.GetScoresFromPage(url, categories);
+        core.info(`Finished PageInsights for URL: ${url}`);
 
         return scores;
     }
