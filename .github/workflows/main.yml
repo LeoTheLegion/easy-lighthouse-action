@@ -106,6 +106,9 @@ jobs:
 
       - name: Build
         run: npm run build
+        
+      - name: Zip dist folder
+        run: cd dist && zip -r ../dist.zip .
 
       - name: Get version from package.json
         id: get_version
@@ -113,22 +116,9 @@ jobs:
 
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ steps.get_version.outputs.version }}
-          release_name: v${{ steps.get_version.outputs.version }}
           draft: false
           prerelease: false
-
-      - name: Upload Release Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist
-          asset_name: dist.zip
-          asset_content_type: application/zip
+          files: dist.zip
