@@ -27819,6 +27819,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.RequestQueue = void 0;
 const helpers_1 = __nccwpck_require__(1302);
+class Handler {
+    constructor({ request, resolve, reject, }) {
+        this.request = request;
+        this.resolve = resolve;
+        this.reject = reject;
+        this.retry = 5;
+    }
+}
 class RequestQueue {
     constructor(requestsPerSecond = 1) {
         this.queue = [];
@@ -27828,7 +27836,7 @@ class RequestQueue {
     add(request) {
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => {
-                this.queue.push({ request, resolve, reject });
+                this.queue.push(new Handler({ request, resolve, reject }));
             });
         });
     }
@@ -27840,10 +27848,38 @@ class RequestQueue {
             const delayMs = Math.floor(1000 / this.requestsPerSecond);
             try {
                 while (this.queue.length > 0) {
-                    const { request, resolve, reject } = this.queue.shift();
-                    request()
-                        .then(resolve)
-                        .catch(reject);
+                    const { request, resolve, reject, retry } = this.queue.shift();
+                    const executeWithRetry = () => __awaiter(this, void 0, void 0, function* () {
+                        try {
+                            const result = yield request();
+                            resolve(result);
+                        }
+                        catch (error) {
+                            if (retry > 0) {
+                                // Calculate exponential backoff
+                                const baseDelay = 1000; // 1 second base
+                                const maxRetries = 5; // Original retry count
+                                const attempt = maxRetries - retry;
+                                const exponentialDelay = Math.min(baseDelay * Math.pow(2, attempt), 30000 // Max 30 seconds
+                                );
+                                // Add random jitter (±20%)
+                                const jitter = exponentialDelay * 0.2 * (Math.random() - 0.5);
+                                const finalDelay = exponentialDelay + jitter;
+                                yield new Promise(r => setTimeout(r, finalDelay));
+                                this.queue.push({
+                                    request,
+                                    resolve,
+                                    reject,
+                                    retry: retry - 1,
+                                });
+                                console.warn(`Request failed, retrying in ${Math.round(finalDelay)}ms. ${retry - 1} retries remaining`);
+                            }
+                            else {
+                                reject(error);
+                            }
+                        }
+                    });
+                    executeWithRetry();
                     yield (0, helpers_1.sleep)(delayMs);
                 }
             }
@@ -27979,6 +28015,10 @@ function run() {
         }
         catch (error) {
             if (error instanceof Error) {
+                // If the error is due to the environment 
+                // not supporting job summaries, ignore it
+                if (error.message === 'Unable to find environment variable for $GITHUB_STEP_SUMMARY. Check if your runtime environment supports job summaries.')
+                    return;
                 core.setFailed(error.message);
             }
         }
@@ -28241,39 +28281,17 @@ class PageInsightsAnalyzer {
     }
     GetStats(url, category) {
         return __awaiter(this, void 0, void 0, function* () {
-            const maxRetries = 3;
-            const retryDelay = 1000; // 1 second
             return this.requestQueue.add(() => __awaiter(this, void 0, void 0, function* () {
-                let lastError;
-                for (let attempt = 1; attempt <= maxRetries; attempt++) {
-                    try {
-                        core.debug(`Attempt ${attempt}/${maxRetries} checking ${category} for ${url}`);
-                        const data = yield fetch(`${this.PAGEINSIGHTSURL}?url=${url}&strategy=${this._pgConfig.device}&category=${category}&key=${this._pgConfig.apiKey}`);
-                        const result = yield data.json();
-                        if (result.error) {
-                            throw new Error(JSON.stringify(result.error));
-                        }
-                        return {
-                            category: category,
-                            value: result.lighthouseResult.categories[category].score *
-                                100,
-                        };
-                    }
-                    catch (error) {
-                        lastError = error;
-                        if (error instanceof Error) {
-                            core.warning(`Attempt ${attempt} failed for ${url}: ${error.message}`);
-                        }
-                        else {
-                            core.warning(`Attempt ${attempt} failed for ${url}: ${String(error)}`);
-                        }
-                        if (attempt < maxRetries) {
-                            yield new Promise((resolve) => setTimeout(resolve, retryDelay));
-                            continue;
-                        }
-                    }
+                core.debug(`Checking ${category} for ${url}`);
+                const data = yield fetch(`${this.PAGEINSIGHTSURL}?url=${url}&strategy=${this._pgConfig.device}&category=${category}&key=${this._pgConfig.apiKey}`);
+                const result = yield data.json();
+                if (result.error) {
+                    throw new Error(JSON.stringify(result.error));
                 }
-                throw new Error(`Failed after ${maxRetries} attempts for ${url}: ${lastError.message}`);
+                return {
+                    category: category,
+                    value: result.lighthouseResult.categories[category].score * 100,
+                };
             }));
         });
     }
