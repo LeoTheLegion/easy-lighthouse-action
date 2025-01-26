@@ -19,7 +19,7 @@ class Handler {
         this.request = request;
         this.resolve = resolve;
         this.reject = reject;
-        this.retry = 0;
+        this.retry = 3;
     }
 }
 

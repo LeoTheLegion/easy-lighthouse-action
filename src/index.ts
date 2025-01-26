@@ -13,6 +13,12 @@ export async function run(): Promise<void> {
         // Core functionality using config values
     } catch (error) {
         if (error instanceof Error) {
+
+            // If the error is due to the environment 
+            // not supporting job summaries, ignore it
+            if (error.message === 'Unable to find environment variable for $GITHUB_STEP_SUMMARY. Check if your runtime environment supports job summaries.')
+                return;
+
             core.setFailed(error.message);
         }
     }
