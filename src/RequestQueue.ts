@@ -19,7 +19,7 @@ class Handler {
         this.request = request;
         this.resolve = resolve;
         this.reject = reject;
-        this.retry = 3;
+        this.retry = 5;
     }
 }
 
@@ -54,7 +54,21 @@ export class RequestQueue {
                         resolve(result);
                     } catch (error) {
                         if (retry > 0) {
-                            // Re-queue with one less retry
+                            // Calculate exponential backoff
+                            const baseDelay = 1000; // 1 second base
+                            const maxRetries = 5; // Original retry count
+                            const attempt = maxRetries - retry;
+                            const exponentialDelay = Math.min(
+                                baseDelay * Math.pow(2, attempt),
+                                30000 // Max 30 seconds
+                            );
+                            
+                            // Add random jitter (±20%)
+                            const jitter = exponentialDelay * 0.2 * (Math.random() - 0.5);
+                            const finalDelay = exponentialDelay + jitter;
+                
+                            await new Promise(r => setTimeout(r, finalDelay));
+                            
                             this.queue.push({
                                 request,
                                 resolve,
@@ -62,12 +76,9 @@ export class RequestQueue {
                                 retry: retry - 1,
                             });
                             console.warn(
-                                `A request failed, retrying. ${
-                                    retry - 1
-                                } retries remaining`
+                                `Request failed, retrying in ${Math.round(finalDelay)}ms. ${retry - 1} retries remaining`
                             );
                         } else {
-                            // No more retries, reject the original promise
                             reject(error);
                         }
                     }
