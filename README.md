@@ -21,7 +21,7 @@ To use this action in your GitHub workflows, follow these steps:
        runs-on: ubuntu-latest
        steps:
          - name: Run Page Insights Action
-           uses: leothelegion/easy-lighthouse-action@preview
+           uses: leothelegion/easy-lighthouse-action@v0.4.1
            with:
              device: 'mobile'
              page_insights_key: ${{ secrets.PAGE_INSIGHTS_KEY }}
@@ -107,11 +107,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Run Page Insights Action
-        uses: leothelegion/easy-lighthouse-action@preview
+        uses: leothelegion/easy-lighthouse-action@v0.4.1
         with:
-          urls: |
-            https://example.com
-            https://example2.com
           device: 'mobile'
           page_insights_key: ${{ secrets.PAGE_INSIGHTS_KEY }}
           performance_threshold: 90
@@ -132,7 +129,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Run Page Insights Action
-        uses: leothelegion/easy-lighthouse-action@preview
+        uses: leothelegion/easy-lighthouse-action@v0.4.1
         with:
           urls: |
             https://example.com
