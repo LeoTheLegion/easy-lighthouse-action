@@ -120,6 +120,7 @@ jobs:
         run: echo "::set-output name=version::$(node -p -e "require('./package.json').version")"
 
       - name: Commit dist
+        continue-on-error: true
         run: |
           git add dist -f
           git commit -m "chore: update dist for version ${{ github.ref_name }}"
