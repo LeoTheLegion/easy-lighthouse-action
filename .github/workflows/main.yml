@@ -145,6 +145,24 @@ jobs:
           git add dist -f
           git commit -m "chore: update dist for version ${{ github.ref_name }}"
           git push origin HEAD:main
+      
+      - name: Commit dist
+        if: ${{ steps.check_dist.outputs.hasChanged == 'true' }}
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git checkout -b update-dist-${{ github.sha }}
+          git add dist -f
+          git commit -m "chore: update dist for version ${{ github.ref_name }}"
+          git push origin update-dist-${{ github.sha }}
+          gh pr create --title "Update dist files" \
+            --body "Automated PR to update dist files" \
+            --base main \
+            --head update-dist-${{ github.sha }} \
+            --merge auto \
+            --delete-branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Release
         if: ${{ steps.check_dist.outputs.hasChanged == 'true' }}
