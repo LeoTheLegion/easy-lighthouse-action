@@ -107,10 +107,30 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Generate Hash on dist 
+        id: hash
+        run: |
+          echo "Hashing dist files"
+          HASH=$(find dist -type f -exec sha256sum {} \; | sort | sha256sum | cut -d' ' -f1)
+          echo "hash=$HASH" >> $GITHUB_OUTPUT
+
       - name: Build
         run: npm run build
 
+      - name: Check if dist has changed
+        id: check_dist
+        run: |
+          HASH=$(find dist -type f -exec sha256sum {} \; | sort | sha256sum | cut -d' ' -f1)
+          if [ "$HASH" = "$(grep hash $GITHUB_EVENT_PATH | cut -d'=' -f2)" ]; then
+            echo "hasChanged=false" >> $GITHUB_OUTPUT
+            echo "No changes in dist"
+          else
+            echo "hasChanged=true" >> $GITHUB_OUTPUT
+            echo "Changes detected in dist"
+          fi
+
       - name: Configure Git
+        if: ${{ steps.check_dist.outputs.hasChanged == 'true' }}
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
@@ -120,13 +140,14 @@ jobs:
         run: echo "::set-output name=version::$(node -p -e "require('./package.json').version")"
 
       - name: Commit dist
-        continue-on-error: true
+        if: ${{ steps.check_dist.outputs.hasChanged == 'true' }}
         run: |
           git add dist -f
           git commit -m "chore: update dist for version ${{ github.ref_name }}"
           git push origin HEAD:main
 
       - name: Create Release
+        if: ${{ steps.check_dist.outputs.hasChanged == 'true' }}
         id: create_release
         uses: softprops/action-gh-release@v2
         with:
