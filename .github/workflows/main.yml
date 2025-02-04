@@ -139,7 +139,7 @@ jobs:
         id: get_version
         run: echo "::set-output name=version::$(node -p -e "require('./package.json').version")"
 
-        - name: Configure SSH
+      - name: Configure SSH
         if: ${{ steps.check_dist.outputs.hasChanged == 'true' }}
         run: |
           mkdir -p ~/.ssh
