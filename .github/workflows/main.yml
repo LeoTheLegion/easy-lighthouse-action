@@ -142,9 +142,6 @@ jobs:
       - name: Commit dist
         if: ${{ steps.check_dist.outputs.hasChanged == 'true' }}
         run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git remote set-url origin https://x-access-token:${{ secrets.CUSTOM_GITHUB_TOKEN }}@github.com/${{ github.repository }}
           git add dist -f
           git commit -m "chore: update dist for version ${{ github.ref_name }}"
           git push origin HEAD:main
