@@ -1,8 +1,8 @@
-name: 'Page Insights Action'
+name: 'Easy Lighthouse Action'
 description: |
-    Run Google Page Insights on a list of URLs or a sitemap.
+    Run Google PageSpeed Insights on a list of URLs or a sitemap.
     Depending on your thresholds, the action will pass or fail.
-    Requires a Google Page Insights API key.
+    Requires a Google PageSpeed Insights API key.
 
 inputs:
   urls:
@@ -12,7 +12,7 @@ inputs:
     default: 'mobile'
     required: true
   page_insights_key:
-    description: 'Google Page Insights API key'
+    description: 'Google PageSpeed Insights API key'
     required: true
   performance_threshold:
     description: 'Performance threshold'

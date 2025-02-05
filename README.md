@@ -1,12 +1,12 @@
 [![PageInsights CI](https://github.com/LeoTheLegion/easy-lighthouse-action/actions/workflows/main.yml/badge.svg)](https://github.com/LeoTheLegion/easy-lighthouse-action/actions/workflows/main.yml)
 
-# Page Insights Action
+# Easy Lighthouse Action
 
-This project is a custom GitHub Action that runs Google Page Insights on a list of URLs or a sitemap.
+This project is a custom GitHub Action that runs Google PageSpeed Insights on a list of URLs or a sitemap.
 
 ## Overview
 
-This GitHub Action is designed to perform Google Page Insights audits. Depending on your thresholds, the action will pass or fail. **It requires a Google Page Insights API key**.
+This GitHub Action is designed to perform Google PageSpeed Insights audits. Depending on your thresholds, the action will pass or fail. **It requires a Google PageSpeed Insights API key**.
 
 ## Getting Started
 
@@ -20,7 +20,7 @@ To use this action in your GitHub workflows, follow these steps:
      example-job:
        runs-on: ubuntu-latest
        steps:
-         - name: Run Page Insights Action
+         - name: Run PageSpeed Insights Action
            uses: leothelegion/easy-lighthouse-action@v0.4.1
            with:
              device: 'mobile'
@@ -43,7 +43,7 @@ To use this action in your GitHub workflows, follow these steps:
 |----------------------------|-----------------------------------------|----------|
 | `urls`                     | URLs to audit (separated by new lines)  | Yes      |
 | `device`                   | Device to emulate (mobile/desktop)      | Yes      |
-| `page_insights_key`        | Google Page Insights API key            | Yes      |
+| `page_insights_key`        | Google PageSpeed Insights API key            | Yes      |
 | `performance_threshold`    | Performance threshold                   | No       |
 | `seo_threshold`            | SEO threshold                           | No       |
 | `accessibility_threshold`  | Accessibility threshold                 | No       |
@@ -106,7 +106,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Run Page Insights Action
+      - name: Run PageSpeed Insights Action
         uses: leothelegion/easy-lighthouse-action@v0.4.1
         with:
           device: 'mobile'
@@ -128,7 +128,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Run Page Insights Action
+      - name: Run PageSpeed Insights Action
         uses: leothelegion/easy-lighthouse-action@v0.4.1
         with:
           urls: |
