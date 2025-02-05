@@ -1,8 +1,6 @@
 name: 'Easy Lighthouse Action'
 description: |
     Run Google PageSpeed Insights on a list of URLs or a sitemap.
-    Depending on your thresholds, the action will pass or fail.
-    Requires a Google PageSpeed Insights API key.
 
 inputs:
   urls:
