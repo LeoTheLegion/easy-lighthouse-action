@@ -1,11 +1,10 @@
 {
   "name": "easy-lighthouse-action",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A GitHub Action to run Lighthouse audits on your web pages",
   "main": "dist/index.js",
   "scripts": {
     "build": "ncc build src/index.ts -o dist",
-    "test": "jest",
     "prepare": "npm run build",
     "local": "local-action ./ src/index.ts .env"
   },
@@ -24,13 +23,9 @@
     "fast-xml-parser": "^4.5.1"
   },
   "devDependencies": {
-    "@types/jest": "^27.0.2",
     "@types/node": "^22.13.10",
     "@vercel/ncc": "^0.38.1",
-    "jest": "^27.3.1",
-    "ts-jest": "^29.2.6",
+    "jest": "^29.7.0",
     "typescript": "^5.8.2"
   }
 }
-
-
