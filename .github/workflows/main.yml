@@ -117,20 +117,7 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Check if dist has changed
-        id: check_dist
-        run: |
-          HASH=$(find dist -type f -exec sha256sum {} \; | sort | sha256sum | cut -d' ' -f1)
-          if [ "$HASH" = "$(grep hash $GITHUB_EVENT_PATH | cut -d'=' -f2)" ]; then
-            echo "hasChanged=false" >> $GITHUB_OUTPUT
-            echo "No changes in dist"
-          else
-            echo "hasChanged=true" >> $GITHUB_OUTPUT
-            echo "Changes detected in dist"
-          fi
-
       - name: Configure Git
-        if: ${{ steps.check_dist.outputs.hasChanged == 'true' }}
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
@@ -139,15 +126,31 @@ jobs:
         id: get_version
         run: echo "::set-output name=version::$(node -p -e "require('./package.json').version")"
 
-      - name: Commit dist
-        if: ${{ steps.check_dist.outputs.hasChanged == 'true' }}
+      - name: Configure SSH
         run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+      
+      - name: Commit dist
+        id: commit_status
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git remote set-url origin git@github.com:${{ github.repository }}.git
           git add dist -f
-          git commit -m "chore: update dist for version ${{ github.ref_name }}"
-          git push origin HEAD:main
+          if git diff --staged --quiet; then
+            echo "hasChanges=false" >> $GITHUB_OUTPUT
+            echo "No changes to commit"
+          else
+            git commit -m "chore: update dist for version ${{ github.ref_name }}"
+            git push origin HEAD:main
+            echo "hasChanges=true" >> $GITHUB_OUTPUT
+          fi
 
       - name: Create Release
-        if: ${{ steps.check_dist.outputs.hasChanged == 'true' }}
+        if: ${{ steps.commit_status.outputs.hasChanges == 'true' }}
         id: create_release
         uses: softprops/action-gh-release@v2
         with:
